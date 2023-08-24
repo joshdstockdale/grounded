@@ -4,10 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --base-href='/grounded/'",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "uno": "unocss \"src/app/**/**/*.{ts,html}\" --watch --config=uno.config.ts --out-file=\"src/css/uno.css\" -m"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +31,7 @@
     "@angular/cli": "~16.2.0",
     "@angular/compiler-cli": "^16.2.0",
     "@types/jasmine": "~4.3.0",
+    "angular-cli-ghpages": "^0.6.2",
     "autoprefixer": "^10.4.15",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
