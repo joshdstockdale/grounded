@@ -22,10 +22,10 @@ import './components/shoelace/shoelace';
 export class AppComponent implements AfterViewChecked {
   //logoClass = 'scale-[2.0] translate-y-10';
   logoClass = '';
-  splashClasses = 'opacity-0';
+  // splashClasses = 'opacity-0';
 
   onWindowScroll() {
-    this.splashClasses = 'opacity-0';
+    // this.splashClasses = 'opacity-0';
     if (window.scrollY > 0) {
       this.logoClass = 'scale-[.6]';
     } else {
@@ -33,10 +33,10 @@ export class AppComponent implements AfterViewChecked {
     }
   }
   ngAfterViewChecked(): void {
-    setTimeout(() => {
-      this.logoClass = 'scale-100';
-      this.splashClasses = 'opacity-0';
-    }, 3000);
+    // setTimeout(() => {
+    //   this.logoClass = 'scale-100';
+    //   this.splashClasses = 'opacity-0';
+    // }, 3000);
   }
 
   get currentYear(): string {
