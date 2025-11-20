@@ -1,27 +1,53 @@
-# Grounded
+# Project go_angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.0.
+One Paragraph of project description goes here
 
-## Development server
+## Getting Started
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-## Code scaffolding
+## MakeFile
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run build make command with tests
+```bash
+make all
+```
 
-## Build
+Build the application
+```bash
+make build
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Run the application
+```bash
+make run
+```
+Create DB container
+```bash
+make docker-run
+```
 
-## Running unit tests
+Shutdown DB Container
+```bash
+make docker-down
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+DB Integrations Test:
+```bash
+make itest
+```
 
-## Running end-to-end tests
+Live reload the application:
+```bash
+make watch
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Run the test suite:
+```bash
+make test
+```
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Clean up binary from the last build:
+```bash
+make clean
+```
