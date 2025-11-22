@@ -9,44 +9,37 @@
     }
     </p>
   </div>
-  <div class="grid grid-cols-6">
-    @for (key of rowHeaders; track key){
-      @let field = fields[key];
-      <div [class]="`text-${field.align} font-bold`">{{field?.label}}</div>
-    }
-    @for (row of budgetForm; track row['id']; let i = $index) {
-      @for (key of rowHeaders; track key){
+<form [formGroup]="budgetForm">
+  <div class="grid grid-cols-6" formArrayName="items">
+    
+    <div class="text-left font-bold">Payee</div>
+    <div class="text-center font-bold">Auto?</div>
+    <div class="text-center font-bold">Day</div>
+    <div class="text-right font-bold">Actual</div>
+    <div class="text-right font-bold">Balance</div>
+    <div class="text-right font-bold">Budget</div>
+    @for (row of itemsArray.controls; track row; let i = $index) {
+      <span [formGroupName]="i" class="contents">
+      <input hlmInput type="text" formControlName="payee" class="text-left"/>
 
-        @if (i === 0){
-        }
-        @let field = fields[key];
-        @switch (field?.type){
-          @case("text"){
-            <input  hlmInput type="text"  [field]="row[key]" [class]="`text-${field.align}`"/>
-          }
-          @case("checkbox"){
-            <div [class]="`text-${field.align} self-center`">
-            <hlm-checkbox  [field]="row[key]" />
-            </div>
-          }
-          @case("integer"){
-            <input  hlmInput type="number"
-      class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-       [field]="row[key]" [class]="`text-${field.align}`" />
-          }
-          @case("currency"){
-            <input  hlmInput type="text"
-         [field]="row[key]" [class]="`text-${field.align}`" step="0.01"   />
-          }
-          @default {
-          }
-         }
-        }
+      <div class="text-center self-center`">
+        <hlm-checkbox formControlName="auto" />
+      </div>
+
+      <input hlmInput type="number"
+      class="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      formControlName="dayOfMonth" />
+
+      <div class="text-right">0.00</div>
+      <div class="text-right">0.00</div>
+      <input hlmInput appCurrencyInput type="text" formControlName="budget" class="text-right" step="0.01"   />
+    </span>
     }
 
     <div class="text-gray-500">+ Add</div>
 
   </div>
+  </form>
 </main>
 
 
