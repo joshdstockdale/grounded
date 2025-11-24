@@ -52,7 +52,7 @@ export class App {
     year: 2025,
     archived: false,
     lines: [
-      { id: '1', payee: 'Gas 0', auto: false, dayOfMonth: 1, actual: 36.0, budget: 35.0 },
+      { id: '1', payee: 'Gas 0', auto: false, dayOfMonth: 10, actual: 36.0, budget: 35.0 },
       { id: '2', payee: 'Rent', auto: true, dayOfMonth: 1, actual: 1500, budget: 2500.54 },
       { id: '3', payee: 'Food 0', auto: false, dayOfMonth: 5, actual: 500, budget: 500.0 },
     ],
@@ -64,10 +64,26 @@ export class App {
       items: this.fb.array([]), // Initialize an empty FormArray
     });
     this.addInitialItems();
+    this.sortForm('dayOfMonth', 'payee', 'asc');
   }
 
   addInitialItems(): void {
     this.budgetDetail.lines.map((detail) => this.addItem(detail));
+  }
+
+  sortForm(primary: string, secondary: string, direction: 'asc' | 'desc'): void {
+    this.itemsArray.controls.sort((a, b) => {
+      const valueA = a.get(primary)?.value;
+      const valueB = b.get(primary)?.value;
+
+      if (typeof valueA === 'string' && typeof valueB === 'string') {
+        return direction === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+      } else if (typeof valueA === 'number' && typeof valueB === 'number') {
+        return direction === 'asc' ? valueA - valueB : valueB - valueA;
+      }
+
+      return 0; // Fallback if types are not comparable
+    });
   }
 
   addNewItem(): void {
@@ -120,6 +136,7 @@ export class App {
         }
         return obj as LineDetail;
       });
+
       return true;
     }
     return false;
@@ -151,6 +168,8 @@ export class App {
       if (col && value && id) {
         if (this.valueChanged(col, value, id)) {
           lastValueFrom(this.budgetService.updateBudgetLine(col, value, id));
+
+          this.sortForm('dayOfMonth', 'payee', 'asc');
         }
       }
     }
