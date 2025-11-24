@@ -1,6 +1,20 @@
-import { Directive, HostListener, ElementRef, OnInit, inject } from '@angular/core';
+import {
+  Directive,
+  HostListener,
+  ElementRef,
+  OnInit,
+  inject,
+  Renderer2,
+  HostBinding,
+  signal,
+  SimpleChange,
+  Optional,
+  Self,
+} from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { NgControl } from '@angular/forms';
+import { parseCurrency } from '../utils/utils';
+import { Subject, takeUntil } from 'rxjs';
 
 @Directive({
   selector: '[appCurrencyInput]',
@@ -8,22 +22,27 @@ import { NgControl } from '@angular/forms';
   providers: [CurrencyPipe], // Provide the CurrencyPipe at the directive level
 })
 export class CurrencyInputDirective implements OnInit {
-  private el: HTMLInputElement = inject(ElementRef).nativeElement;
   private currencyPipe: CurrencyPipe = inject(CurrencyPipe);
   private control: NgControl = inject(NgControl);
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    @Optional() @Self() private ngControl: NgControl,
+    private renderer: Renderer2,
+    private el: ElementRef
+  ) {}
 
   ngOnInit() {
-    // Format the initial value when the control loads
-    this.formatValue(this.control.value);
-  }
+    const formattedValue = this.parseAndFormat(this.control.control?.getRawValue());
+    this.control.control?.setValue(formattedValue, { emitEvent: true });
 
-  @HostListener('focus', ['$event'])
-  onFocus(event: Event) {
-    if (event.currentTarget instanceof HTMLInputElement) {
-      // Type guard
-      const value = event.currentTarget.value;
-      const numericValue = this.parseCurrency(value);
-      this.el.value = numericValue?.toString() || '';
+    if (this.ngControl && this.ngControl.valueChanges) {
+      this.ngControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+        // This code runs when the value changes, including when setValue() is called
+
+        const formattedValue = this.parseAndFormat(value);
+        this.control.control?.setValue(formattedValue, { emitEvent: false });
+      });
     }
   }
 
@@ -31,26 +50,29 @@ export class CurrencyInputDirective implements OnInit {
   onBlur(event: Event) {
     if (event.currentTarget instanceof HTMLInputElement) {
       // Type guard
-      const value = event.currentTarget.value;
-      const numericValue = this.parseCurrency(value);
-      this.formatValue(numericValue);
-      this.control.control?.setValue(numericValue, { emitEvent: true });
+      const formattedValue = this.parseAndFormat(event.currentTarget.value);
+      this.control.control?.setValue(formattedValue, { emitEvent: true });
     }
   }
 
-  private formatValue(value: any): void {
+  private parseAndFormat(value: string) {
+    const numericValue = parseCurrency(value);
+    const errClass = '!bg-red-700/30';
+    if (numericValue < 0) {
+      this.renderer.addClass(this.el.nativeElement, errClass);
+    } else {
+      this.renderer.removeClass(this.el.nativeElement, errClass);
+    }
+    return this.formatValue(numericValue);
+  }
+
+  private formatValue(value: any): string {
     if (value) {
       // Use the CurrencyPipe to format the number
       const formattedValue = this.currencyPipe.transform(value, 'USD', 'symbol', '1.2-2');
-      this.el.value = formattedValue || '';
+      return formattedValue || '$0.00';
     } else {
-      this.el.value = '';
+      return '$0.00';
     }
-  }
-
-  private parseCurrency(value: string): number | null {
-    // Remove non-numeric characters (except decimal point and sign) to get the raw number
-    const numericValue = value.replace(/[^0-9.-]+/g, '');
-    return numericValue ? parseFloat(numericValue) : null;
   }
 }

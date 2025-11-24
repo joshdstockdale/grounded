@@ -9,37 +9,54 @@
     }
     </p>
   </div>
-<form [formGroup]="budgetForm">
-  <div class="grid grid-cols-6" formArrayName="items">
-    
-    <div class="text-left font-bold">Payee</div>
-    <div class="text-center font-bold">Auto?</div>
-    <div class="text-center font-bold">Day</div>
-    <div class="text-right font-bold">Actual</div>
-    <div class="text-right font-bold">Balance</div>
-    <div class="text-right font-bold">Budget</div>
+<form [formGroup]="budgetForm" hlmTableContainer>
+  <table hlmTable formArrayName="items" class="">
+    <thead hlmTHead>
+      <tr hlmTr>
+        <th class="w-auto" hlmTh>Payee</th>
+        <th class="text-center" hlmTh>Auto?</th>
+        <th class="text-center" hlmTh>Day</th>
+        <th class="text-right" hlmTh>Actual</th>
+        <th class="text-right" hlmTh>Balance</th>
+        <th class="text-right" hlmTh>Budget</th>
+        <th hlmTh></th>
+      </tr>
+    </thead>
+    <tbody hlmTBody>
+
     @for (row of itemsArray.controls; track row; let i = $index) {
-      <span [formGroupName]="i" class="contents">
-      <input hlmInput type="text" formControlName="payee" class="text-left"/>
-
-      <div class="text-center self-center`">
-        <hlm-checkbox formControlName="auto" />
-      </div>
-
-      <input hlmInput type="number"
-      class="text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+      <tr hlmTr [formGroupName]="i">
+      <td hlmTd class="p-0">
+      <input hlmInput [attr.data-id]="row.get('id')?.value" data-col="payee" (blur)="saveString($event)" type="text" formControlName="payee" class="text-left rounded-none border-0 field-sizing-content"/>
+      </td>
+      <td hlmTd class="text-center p-0">
+        <hlm-checkbox formControlName="auto" (checkedChange)="saveBool('auto',$event, row.get('id')?.value)" />
+      </td>
+      <td hlmTd class="p-0">
+      <input hlmInput [attr.data-id]="row.get('id')?.value" data-col="dayOfMonth" (blur)="saveNumber($event)"  type="number"
+      class="w-16 text-center rounded-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none border-0"
       formControlName="dayOfMonth" />
+      </td>
+      <td hlmTd class="p-0">
 
-      <div class="text-right">0.00</div>
-      <div class="text-right">0.00</div>
-      <input hlmInput appCurrencyInput type="text" formControlName="budget" class="text-right" step="0.01"   />
-    </span>
+      <input hlmInput [attr.data-id]="row.get('id')?.value" data-col="actual" (blur)="saveCurrency($event)" appCurrencyInput type="text" formControlName="actual" class=" text-right rounded-none border-0" step="0.01"    />
+      </td>
+      <td hlmTd class="p-0">
+      <input hlmInput  appCurrencyInput type="text" formControlName="balance" class="text-right rounded-none border-0" step="0.01" readonly   />
+      </td>
+      <td hlmTd class="p-0">
+<input hlmInput [attr.data-id]="row.get('id')?.value" data-col="budget" (blur)="saveCurrency($event)" appCurrencyInput type="text" formControlName="budget" class="text-right rounded-none border-0" step="0.01"   />
+      </td>
+      <td hlmTd class="p-0">
+
+      <button hlmBtn size="icon" variant="ghost" class="ml-1 hover:cursor-pointer" title="Delete"><ng-icon hlm size="sm" name="lucideX"></ng-icon></button>
+      </td>
     }
 
-    <div class="text-gray-500">+ Add</div>
-
-  </div>
+    </tbody>
+    </table>
   </form>
+  <button class="mt-4 hover:cursor-pointer" hlmBtn variant="default" size="sm" (click)="addNewItem()"><ng-icon hlm size="sm" name="lucidePlus"></ng-icon> Add</button>
 </main>
 
 
